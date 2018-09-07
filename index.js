@@ -31,11 +31,11 @@ exports.getRouteStops = function(routeTag, callback){
                         }
                         stopsJson.push(object);
                     });
-                    return callback(null,stopsJson);
                 }
             }
+            return callback(null,stopsJson);
         })
-    });
+    })
 }
 
 //function to get a specific route object by routeTag
@@ -49,16 +49,18 @@ exports.getRouteStops = function(routeTag, callback){
 
 // }
 
+
 //function to get the route predictions for a specified route
 exports.getRoutePredictions = function(routeTag,callback){
     exports.getRouteStops(routeTag,function(err,data){
         if(err){return callback(err,null)}
+        var done = false;
         var predictionObjs = [];
-        data.forEach(element => {
+        for(var i =0;i<data.length;i++){
             var minutesArr = [];
             var secondsArr = [];
             var url = predictionUrl.replace("<routeTag>",routeTag);
-            url = url.replace("<stopTag>",element.tag);
+            url = url.replace("<stopTag>",data[i].tag);
             //request predictions from the api
             request(url, (err, res, body) => {
                 if(err){ return callback(err, null)};
@@ -68,7 +70,6 @@ exports.getRoutePredictions = function(routeTag,callback){
                     var stopTitle = data.body.predictions[0].stopTitle[0];
                     //This handles the case where there is no prediction for a specific route
                     if(!data.body.predictions[0].dirTitleBecauseNoPredictions){
-                        // console.log(data.body.predictions[0]);
                         var pred = data.body.predictions[0].direction[0].prediction;
                         pred.forEach(element => {
                             minutesArr.push(element.minutes[0]);
@@ -79,17 +80,16 @@ exports.getRoutePredictions = function(routeTag,callback){
                             minutes: minutesArr,
                             seconds: secondsArr
                         })
-
+                        // console.log(predictionObjs);
                     }
-
+                    
                 })
             });
-        });
-        console.log(predictionObjs)
+        }
+        return callback(null,"data")
         
-    
-
     });
+    // console.log()
 }
 
 
