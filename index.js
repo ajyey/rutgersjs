@@ -10,30 +10,32 @@ var predictionUrl = 'http://webservices.nextbus.com/service/publicXMLFeed?comman
 
 
 //When passed in a route tag, this function returns an array of json objects containing the stops on the route
-exports.getRouteStops = function(routeTag, callback){
-    request(routeConfig,(err,res,body) => {
-        if(err) { return callback(err, null)}
-        parser.parseString(body,function(err, result){
-            if(err){callback(err)};
-            var data = JSON.parse(JSON.stringify(result,undefined,3));
-            for(var i = 0;i<data.body.route.length;i++){
-                var tag = data.body.route[i].tag[0];
-                if(tag===routeTag){
-                    var stops = data.body.route[i].stop;
-                    var stopsJson = [];
-                    stops.forEach(element => {
-                        var object = {
-                            tag: element.tag[0],
-                            title: element.title[0],
-                            lat: element.lat[0],
-                            lon: element.lon[0],
-                            stopId: element.stopId[0]
-                        }
-                        stopsJson.push(object);
-                    });
+exports.getRouteStops = function(routeTag){
+    return new Promise((resolve, reject)=> {
+        request(routeConfig,(err,res,body) => {
+            if(err) {reject("Something went wrong when requesting the url")}
+            parser.parseString(body,function(err, result){
+                if(err){reject("Something went wrong parsing the api response")};
+                var data = JSON.parse(JSON.stringify(result,undefined,3));
+                for(var i = 0;i<data.body.route.length;i++){
+                    var tag = data.body.route[i].tag[0];
+                    if(tag===routeTag){
+                        var stops = data.body.route[i].stop;
+                        var stopsJson = [];
+                        stops.forEach(element => {
+                            var object = {
+                                tag: element.tag[0],
+                                title: element.title[0],
+                                lat: element.lat[0],
+                                lon: element.lon[0],
+                                stopId: element.stopId[0]
+                            }
+                            stopsJson.push(object);
+                        });
+                    }
                 }
-            }
-            return callback(null,stopsJson);
+                resolve(stopsJson);
+            })
         })
     })
 }
