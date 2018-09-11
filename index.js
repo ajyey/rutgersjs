@@ -16,11 +16,11 @@ exports.getRouteStops = function(routeTag){
             if(err) {reject("Something went wrong when requesting the url")}
             parser.parseString(body,function(err, result){
                 if(err){reject("Something went wrong parsing the api response")};
-                var data = JSON.parse(JSON.stringify(result,undefined,3));
-                for(var i = 0;i<data.body.route.length;i++){
-                    var tag = data.body.route[i].tag[0];
+                var routes = JSON.parse(JSON.stringify(result,undefined,3));
+                for(var i = 0;i<routes.body.route.length;i++){
+                    var tag = routes.body.route[i].tag[0];
                     if(tag===routeTag){
-                        var stops = data.body.route[i].stop;
+                        var stops = routes.body.route[i].stop;
                         var stopsJson = [];
                         stops.forEach(element => {
                             var object = {
@@ -53,44 +53,43 @@ exports.getRouteStops = function(routeTag){
 
 
 //function to get the route predictions for a specified route
-exports.getRoutePredictions = function(routeTag,callback){
-    exports.getRouteStops(routeTag,function(err,data){
-        if(err){return callback(err,null)}
-        var done = false;
-        var predictionObjs = [];
-        for(var i =0;i<data.length;i++){
-            var minutesArr = [];
-            var secondsArr = [];
-            var url = predictionUrl.replace("<routeTag>",routeTag);
-            url = url.replace("<stopTag>",data[i].tag);
-            //request predictions from the api
-            request(url, (err, res, body) => {
-                if(err){ return callback(err, null)};
-                parser.parseString(body, function(err, result){
-                    if(err){return callback(err, null)};
-                    var data = JSON.parse(JSON.stringify(result,undefined,3));
-                    var stopTitle = data.body.predictions[0].stopTitle[0];
-                    //This handles the case where there is no prediction for a specific route
-                    if(!data.body.predictions[0].dirTitleBecauseNoPredictions){
-                        var pred = data.body.predictions[0].direction[0].prediction;
-                        pred.forEach(element => {
-                            minutesArr.push(element.minutes[0]);
-                            secondsArr.push(element.seconds[0]);
-                        });
-                        predictionObjs.push({
-                            title: stopTitle,
-                            minutes: minutesArr,
-                            seconds: secondsArr
+exports.getRoutePredictions = function(routeTag){
+    return new Promise((resolve, reject)=>{
+        exports.getRouteStops(routeTag)
+        .then(function(routes){
+                var predictionObjs = [];
+                for(var i =0;i<routes.length;i++){
+                    var minutesArr = [];
+                    var secondsArr = [];
+                    var url = predictionUrl.replace("<routeTag>",routeTag);
+                    url = url.replace("<stopTag>",routes[i].tag);
+                    //request predictions from the api
+                    request(url, (err, res, body) => {
+                        if(err){ reject("There was an error getting the predictions for the specified route")};
+                        parser.parseString(body, function(err, result){
+                            if(err){reject("There was an error parsing the result from predictions request")};
+                            var routes = JSON.parse(JSON.stringify(result,undefined,3));
+                            var stopTitle = routes.body.predictions[0].stopTitle[0];
+                            //This handles the case where there is no prediction for a specific route
+                            if(!routes.body.predictions[0].dirTitleBecauseNoPredictions){
+                                var pred = routes.body.predictions[0].direction[0].prediction;
+                                pred.forEach(element => {
+                                    minutesArr.push(element.minutes[0]);
+                                    secondsArr.push(element.seconds[0]);
+                                });
+                                predictionObjs.push({
+                                    title: stopTitle,
+                                    minutes: minutesArr,
+                                    seconds: secondsArr
+                                })
+                                resolve(predictionObjs);
+                            }
                         })
-                        // console.log(predictionObjs);
-                    }
-                    
-                })
-            });
-        }
-        return callback(null,"data")
-        
-    });
+                    });
+                }
+        })
+        .catch(err => console.log(err));
+    })
     // console.log()
 }
 
