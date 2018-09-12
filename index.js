@@ -90,9 +90,7 @@ exports.getStopLocation = function(stop){
         });
     })
 }
-// exports.getStop = function(stop){
 
-// }
 
 //Gets the locations of all stops
 exports.getAllStopLocations = function(){
@@ -109,6 +107,7 @@ exports.getAllStopLocations = function(){
         resolve(ret);
     });
 }
+
 
 
 
