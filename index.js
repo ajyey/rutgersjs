@@ -52,55 +52,6 @@ exports.getRouteStops = function(routeTag){
         resolve(stops);
     })
 }
-
-//function to get a specific route object by routeTag
-// exports.getRoute = function(routeTag){
-    
-// }
-
-
-//function to get latitude and longitude of a stop
-// exports.getStopLocation = function(routeTag){
-
-// }
-
-
-// function to get the route predictions for a specified route
-// exports.getRoutePredictions = function(routeTag){
-//     return new Promise((resolve, reject)=>{
-//         exports.getRouteStops(routeTag)
-//         .then(async function(routes){
-//                 var predictionObjs = [];
-//                 for(var i =0;i<routes.length;i++){
-//                     var minutesArr = [];
-//                     var secondsArr = [];
-//                     var url = predictionUrl.replace("<routeTag>",routeTag);
-//                     url = url.replace("<stopTag>",routes[i].tag);
-//                     //request predictions from the api
-//                     let req = await doRequest(url);
-//                     let parsed = await parseRequest(req);
-//                     var stopTitle = parsed.body.predictions[0].stopTitle[0];
-//                     //This handles the case where there is no prediction for a specific route
-//                     if(!parsed.body.predictions[0].dirTitleBecauseNoPredictions){
-
-//                         var pred = parsed.body.predictions[0].direction[0].prediction;
-//                         pred.forEach(element => {
-//                             minutesArr.push(element.minutes[0]);
-//                             secondsArr.push(element.seconds[0]);
-//                         });
-//                         predictionObjs.push({
-//                             title: stopTitle,
-//                             minutes: minutesArr,
-//                             seconds: secondsArr
-//                         })
-//                     }
-
-//                 }
-//                 resolve(predictionObjs);
-//         })
-//         .catch(err => console.log(err));
-//     })
-// }
 exports.getRoutePredictions = function(routeTag){
     return new Promise((resolve,reject)=>{
         exports.getRouteStops(routeTag)
@@ -114,12 +65,21 @@ exports.getRoutePredictions = function(routeTag){
                 let promise = doRequest(url);
                 requestPromises.push(promise);
             }
-            let allRes = await Promise.all(requestPromises)
-            allRes.forEach(element => {
+
+            let requestResults;
+            await Promise.all(requestPromises).then(function(result){
+                requestResults = result;
+            })
+
+            requestResults.forEach(element => {
                 let parsedPromise = parseRequest(element);
                 parsedPromises.push(parsedPromise)
             })
-            let parsed = await Promise.all(parsedPromises);
+
+            let parsed;
+            await Promise.all(parsedPromises).then(function(result){
+                parsed = result;
+            }).catch(err => console.log(err));
             parsed.forEach(element => {
                 let minutes = [];
                 let seconds = [];
@@ -138,9 +98,7 @@ exports.getRoutePredictions = function(routeTag){
                     })
                 }
             })
-        
-            console.log(predictions)
-            // resolve(predictions);
+            resolve(predictions);
         })
         .catch(err => console.log(err));
     })
