@@ -69,7 +69,7 @@ exports.getRoutePredictions = function(routeTag){
             let requestResults;
             await Promise.all(requestPromises).then(function(result){
                 requestResults = result;
-            })
+            }).catch(err => console.log(err));
 
             requestResults.forEach(element => {
                 let parsedPromise = parseRequest(element);
