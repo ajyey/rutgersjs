@@ -67,7 +67,16 @@ exports.getRoutePredictions = function(routeTag){
                     predictions.push({
                         title: stopTitle,
                         minutes: minutes,
-                        seconds: seconds
+                        seconds: seconds,
+                        predictionAvailable:true
+                    })
+                }
+                else{
+                    predictions.push({
+                        title: stopTitle,
+                        minutes:null,
+                        seconds:null,
+                        predictionAvailable: false
                     })
                 }
             })
