@@ -17,7 +17,7 @@ exports.getRouteStops = function(routeTag){
         var routes = routeConfig.routes;
         if(!routes.hasOwnProperty(routeTag)){
             //the route tag is not valid
-            reject("You have entered an invalid route tag: "+routeTag);
+            reject("You have entered an invalid route tag: " + routeTag);
         }
         var stops = routeConfig.routes[routeTag].stops;
         resolve(stops);
@@ -115,6 +115,29 @@ exports.getAllStopLocations = function(){
         }
         resolve(ret);
     });
+}
+
+//gets stop locations based on route
+exports.getStopLocationsForRoute = function(routeTag){
+    return new Promise((resolve, reject)=>{
+        let routes = routeConfig.routes;
+        if(!routes.hasOwnProperty(routeTag)){
+            //the route tag is not valid
+            reject("You have entered an invalid route tag: " + routeTag);
+        }
+        let stops = routes[routeTag].stops;
+        let ret = [];
+
+        stops.forEach(stop => {
+            exports.getStopLocation(stop)
+            .then(function(result){
+                ret.push(result)
+            })
+            .catch(err => reject(err))
+        })
+        resolve(ret);
+
+    })
 }
 
 

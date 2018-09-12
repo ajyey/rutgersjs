@@ -6,10 +6,10 @@ var obj = JSON.parse(fs.readFileSync('config/rutgersrouteconfig.json'))
 // console.log(obj.routes['ee'].stops);
 
 
-rutgersjs.getRoutePredictions('f').then(function(routeStops){
-    console.log(routeStops);
-})
-.catch(err => console.log(err));
+// rutgersjs.getRoutePredictions('f').then(function(routeStops){
+//     console.log(routeStops);
+// })
+// .catch(err => console.log(err));
 
 // rutgersjs.getStopLocation('scott').then(function(location){
 // 	console.log(location);
@@ -17,3 +17,6 @@ rutgersjs.getRoutePredictions('f').then(function(routeStops){
 // rutgersjs.getAllStopLocations().then(function(locations){
 // 	console.log(locations);
 // })
+rutgersjs.getStopLocationsForRoute('ee').then(function(result){
+	console.log(result);
+}).catch(err => console.log(err));
