@@ -1,6 +1,6 @@
 {
   "name": "rutgersjs",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "An API wrapper for the various Rutgers API services",
   "main": "index.js",
   "scripts": {
