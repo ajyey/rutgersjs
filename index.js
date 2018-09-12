@@ -105,18 +105,28 @@ exports.getRoutePredictions = function(routeTag){
     return new Promise((resolve,reject)=>{
         exports.getRouteStops(routeTag)
         .then(async function(stops){
-            // let requestPromises = [];
+            let requestPromises = [];
+            let parsedPromises = [];
             let predictions = [];
             for(var i = 0; i<stops.length;i++){
-                let minutes = [];
-                let seconds = [];
                 let url = predictionUrl.replace("<routeTag>",routeTag);
                 url = url.replace("<stopTag>",stops[i]);
-                let req = await doRequest(url);
-                let parsed = await parseRequest(req);
-                let stopTitle = parsed.body.predictions[0].stopTitle[0];
-                if(!parsed.body.predictions[0].dirTitleBecauseNoPredictions){
-                    let pred = parsed.body.predictions[0].direction[0].prediction;
+                let promise = doRequest(url);
+                requestPromises.push(promise);
+            }
+            let allRes = await Promise.all(requestPromises)
+            allRes.forEach(element => {
+                let parsedPromise = parseRequest(element);
+                parsedPromises.push(parsedPromise)
+            })
+            let parsed = await Promise.all(parsedPromises);
+            parsed.forEach(element => {
+                let minutes = [];
+                let seconds = [];
+                let stopTitle = element.body.predictions[0].stopTitle[0];
+
+                if(!element.body.predictions[0].dirTitleBecauseNoPredictions){
+                    let pred = element.body.predictions[0].direction[0].prediction;
                     pred.forEach(element => {
                         minutes.push(element.minutes[0]);
                         seconds.push(element.seconds[0]);
@@ -127,8 +137,10 @@ exports.getRoutePredictions = function(routeTag){
                         seconds: seconds
                     })
                 }
-            }
-            resolve(predictions);
+            })
+        
+            console.log(predictions)
+            // resolve(predictions);
         })
         .catch(err => console.log(err));
     })
