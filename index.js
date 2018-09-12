@@ -2,45 +2,16 @@ const request   = require('request');
 const x2j       = require('xml2js');
 
 const parser = new x2j.Parser({mergeAttrs: true});
-// const routeConfig = 'http://webservices.nextbus.com/service/publicXMLFeed?a=rutgers&command=routeConfig';
 const fs = require('fs');
+
 //parse the route config file for easy access to route/stop information
 const routeConfig = JSON.parse(fs.readFileSync('config/rutgersrouteconfig.json'));
+
 
 //prediction variables
 var predictionUrl = 'http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=rutgers&r=<routeTag>&s=<stopTag>'
 
-
-//When passed in a route tag, this function returns an array of json objects containing the stops on the route
-// exports.getRouteStops = function(routeTag){
-//     return new Promise((resolve, reject)=> {
-//         request(routeConfig,(err,res,body) => {
-//             if(err) {reject("Something went wrong when requesting the url")}
-//             parser.parseString(body,function(err, result){
-//                 if(err){reject("Something went wrong parsing the api response")};
-//                 var routes = JSON.parse(JSON.stringify(result,undefined,3));
-//                 for(var i = 0;i<routes.body.route.length;i++){
-//                     var tag = routes.body.route[i].tag[0];
-//                     if(tag===routeTag){
-//                         var stops = routes.body.route[i].stop;
-//                         var stopsJson = [];
-//                         stops.forEach(element => {
-//                             var object = {
-//                                 tag: element.tag[0],
-//                                 title: element.title[0],
-//                                 lat: element.lat[0],
-//                                 lon: element.lon[0],
-//                                 stopId: element.stopId[0]
-//                             }
-//                             stopsJson.push(object);
-//                         });
-//                     }
-//                 }
-//                 resolve(stopsJson);
-//             })
-//         })
-//     })
-// }
+//Function to get the stops for a specific bus route
 exports.getRouteStops = function(routeTag){
     return new Promise((resolve, reject)=>{
         var routes = routeConfig.routes;
@@ -52,6 +23,8 @@ exports.getRouteStops = function(routeTag){
         resolve(stops);
     })
 }
+//Function to get route predictions for a specific route
+//Returns a promise with the title of the stop and the minutes or seconds eta
 exports.getRoutePredictions = function(routeTag){
     return new Promise((resolve,reject)=>{
         exports.getRouteStops(routeTag)
@@ -69,7 +42,7 @@ exports.getRoutePredictions = function(routeTag){
             let requestResults;
             await Promise.all(requestPromises).then(function(result){
                 requestResults = result;
-            }).catch(err => console.log(err));
+            }).catch(err => reject(err));
 
             requestResults.forEach(element => {
                 let parsedPromise = parseRequest(element);
@@ -79,7 +52,7 @@ exports.getRoutePredictions = function(routeTag){
             let parsed;
             await Promise.all(parsedPromises).then(function(result){
                 parsed = result;
-            }).catch(err => console.log(err));
+            }).catch(err => reject(err));
             parsed.forEach(element => {
                 let minutes = [];
                 let seconds = [];
@@ -100,9 +73,90 @@ exports.getRoutePredictions = function(routeTag){
             })
             resolve(predictions);
         })
-        .catch(err => console.log(err));
+        .catch(err => reject(err));
     })
 }
+
+//Gets the location of a specific stop including title, latitude, and logitude
+exports.getStopLocation = function(stop){
+    return new Promise((resolve, reject)=>{
+        let stops = routeConfig.stops;
+        if(!stops.hasOwnProperty(stop)){reject("An invalid stop was passed in.")}
+        var validStop = stops[stop];
+        resolve({
+            title: validStop.title,
+            lat: Number(validStop.lat),
+            lon: Number(validStop.lon)
+        });
+    })
+}
+// exports.getStop = function(stop){
+
+// }
+
+//Gets the locations of all stops
+exports.getAllStopLocations = function(){
+    return new Promise((resolve, reject)=>{
+        let ret = [];
+        let stops = routeConfig.stops;
+        for(var stop in stops){
+            exports.getStopLocation(stop)
+            .then(function(result){
+                ret.push(result);
+            })
+            .catch(err=>reject(err));
+        }
+        resolve(ret);
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//============================
+//UTILITY FUNCTIONS
+//============================
 function doRequest(url){
     return new Promise((resolve, reject)=>{
         request(url, (err, res, body) => {
