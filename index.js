@@ -1,11 +1,12 @@
 const request   = require('request');
 const x2j       = require('xml2js');
+const path      = require('path');
 
 const parser = new x2j.Parser({mergeAttrs: true});
 const fs = require('fs');
 
 //parse the route config file for easy access to route/stop information
-const routeConfig = JSON.parse(fs.readFileSync('./config/rutgersrouteconfig.json'));
+const routeConfig = JSON.parse(fs.readFileSync(__dirname+path.sep+'config'+path.sep+'rutgersrouteconfig.json'));
 
 
 //prediction variables
