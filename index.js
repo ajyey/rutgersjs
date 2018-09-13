@@ -2,8 +2,7 @@ const request   = require('request');
 const x2j       = require('xml2js');
 const path      = require('path');
 
-// const parser = new x2j.Parser({mergeAttrs: true});
-const parser = require('fast-xml-parser');
+const parser = new x2j.Parser({mergeAttrs: true});
 const fs = require('fs');
 
 //parse the route config file for easy access to route/stop information
@@ -18,16 +17,10 @@ exports.getRouteStops = function(routeTag){
     return new Promise((resolve, reject)=>{
         doRequest(routePredictUrl).then(function(response){
             //parse the request
-            var jsonObj = parser.parse(response);
-            console.log(jsonObj);
-            // parseRequest(response).then(function(parsed){
-            //     var routes = parsed.body.route;
-            //     console.log(routes);
-            // }).catch(err => reject(err))
-        }).catch(err => reject(err))
-
-
-
+            parseRequest(response).then(function(parsed){
+                console.log(parsed);
+            })
+        }).catch(err => reject(err));
         // if(!routes.hasOwnProperty(routeTag)){
         //     //the route tag is not valid
         //     reject("You have entered an invalid route tag: " + routeTag);
