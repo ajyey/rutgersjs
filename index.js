@@ -2,7 +2,8 @@ const request   = require('request');
 const x2j       = require('xml2js');
 const path      = require('path');
 
-const parser = new x2j.Parser({mergeAttrs: true});
+// const parser = new x2j.Parser({mergeAttrs: true});
+const parser = require('fast-xml-parser');
 const fs = require('fs');
 
 //parse the route config file for easy access to route/stop information
@@ -11,17 +12,28 @@ const routeConfig = JSON.parse(fs.readFileSync(__dirname+path.sep+'config'+path.
 
 //prediction variables
 var predictionUrl = 'http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=rutgers&r=<routeTag>&s=<stopTag>'
-
+const routePredictUrl = 'http://webservices.nextbus.com/service/publicXMLFeed?a=rutgers&command=routeConfig'
 //Function to get the stops for a specific bus route
 exports.getRouteStops = function(routeTag){
     return new Promise((resolve, reject)=>{
-        var routes = routeConfig.routes;
-        if(!routes.hasOwnProperty(routeTag)){
-            //the route tag is not valid
-            reject("You have entered an invalid route tag: " + routeTag);
-        }
-        var stops = routeConfig.routes[routeTag].stops;
-        resolve(stops);
+        doRequest(routePredictUrl).then(function(response){
+            //parse the request
+            var jsonObj = parser.parse(response);
+            console.log(jsonObj);
+            // parseRequest(response).then(function(parsed){
+            //     var routes = parsed.body.route;
+            //     console.log(routes);
+            // }).catch(err => reject(err))
+        }).catch(err => reject(err))
+
+
+
+        // if(!routes.hasOwnProperty(routeTag)){
+        //     //the route tag is not valid
+        //     reject("You have entered an invalid route tag: " + routeTag);
+        // }
+        // var stops = routeConfig.routes[routeTag].stops;
+        // resolve(stops);
     })
 }
 //Function to get route predictions for a specific route
@@ -141,23 +153,16 @@ exports.getStopLocationsForRoute = function(routeTag){
     })
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//get stop predictions
+exports.getStopPredictions = function(stop){
+    return new Promise((resolve, reject) => {
+        var routes = routeConfig.routes;
+        var routesContainingTheStop = [];
+        routes.forEach(route => {
+            console.log(route)
+        })
+    })
+}
 
 
 

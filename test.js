@@ -6,7 +6,9 @@ var obj = JSON.parse(fs.readFileSync('config/rutgersrouteconfig.json'))
 // console.log(obj.routes['ee'].stops);
 
 
-// rutgersjs.getRoutePredictions('f').then(function(routeStops){
+
+rutgersjs.getRouteStops('scott');
+// rutgersjs.getRoutePredictions('penn').then(function(routeStops){
 //     console.log(routeStops);
 // })
 // .catch(err => console.log(err));
@@ -17,6 +19,6 @@ var obj = JSON.parse(fs.readFileSync('config/rutgersrouteconfig.json'))
 // rutgersjs.getAllStopLocations().then(function(locations){
 // 	console.log(locations);
 // })
-rutgersjs.getStopLocationsForRoute('ee').then(function(result){
-	console.log(result);
-}).catch(err => console.log(err));
+// rutgersjs.getStopPredictions('scott').then(function(result){
+// 	console.log(result);
+// }).catch(err => console.log(err));
