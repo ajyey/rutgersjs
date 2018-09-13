@@ -11,13 +11,13 @@ const routeConfig = JSON.parse(fs.readFileSync(__dirname+path.sep+'config'+path.
 
 //prediction variables
 var predictionUrl = 'http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=rutgers&r=<routeTag>&s=<stopTag>'
-const routePredictUrl = 'http://webservices.nextbus.com/service/publicXMLFeed?a=rutgers&command=routeConfig'
+const routeConfigUrl = 'http://webservices.nextbus.com/service/publicXMLFeed?a=rutgers&command=routeConfig'
 
 
 //Returns the stop titles for a specific route
 exports.getRouteStops = function(routeTitle){
     return new Promise((resolve, reject)=>{
-        doRequest(routePredictUrl).then(function(response){
+        doRequest(routeConfigUrl).then(function(response){
             //parse the request
             parseRequest(response).then(function(parsed){
                 var routes = parsed.body.route;
@@ -27,36 +27,35 @@ exports.getRouteStops = function(routeTitle){
                         //route found
                         let stop = route.stop;
                         stop.forEach(element => {
-                            stops.push(element.title[0]);
+                            stops.push({
+                                title: element.title[0],
+                                tag: element.tag[0],
+                                routeTitle: routeTitle,
+                                routeTag: route.tag[0]
+                            });
                         })
                         resolve(stops);
                     }
                 })
                 //route not found
                 reject("The route you requested does not exist. Please refer to the documentation to make sure you entered your route title correctly.")
-
-            })
+            }).catch(err => reject(err));
         }).catch(err => reject(err));
-        // if(!routes.hasOwnProperty(routeTag)){
-        //     //the route tag is not valid
-        //     reject("You have entered an invalid route tag: " + routeTag);
-        // }
-        // var stops = routeConfig.routes[routeTag].stops;
-        // resolve(stops);
     })
 }
 //Function to get route predictions for a specific route
 //Returns a promise with the title of the stop and the minutes or seconds eta
-exports.getRoutePredictions = function(routeTag){
+exports.getStopPredictionsForRoute = function(routeTitle){
     return new Promise((resolve,reject)=>{
-        exports.getRouteStops(routeTag)
+        exports.getRouteStops(routeTitle)
         .then(async function(stops){
             let requestPromises = [];
             let parsedPromises = [];
             let predictions = [];
+
             for(var i = 0; i<stops.length;i++){
-                let url = predictionUrl.replace("<routeTag>",routeTag);
-                url = url.replace("<stopTag>",stops[i]);
+                let url = predictionUrl.replace("<routeTag>",stops[i].routeTag);
+                url = url.replace("<stopTag>",stops[i].tag);
                 let promise = doRequest(url);
                 requestPromises.push(promise);
             }
@@ -219,6 +218,12 @@ function parseRequest(body){
             var routes = JSON.parse(JSON.stringify(result,undefined,3));
             resolve(routes);
         })
+    })
+}
+
+function getRouteTag(routeTitle){
+    return new Promise((resolve,reject)=> {
+        doRequest(routeP)
     })
 }
 

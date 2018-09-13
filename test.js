@@ -7,13 +7,13 @@ var obj = JSON.parse(fs.readFileSync('config/rutgersrouteconfig.json'))
 
 
 
-rutgersjs.getRouteStops('EE').then(function(result){
-	console.log(result);
-}).catch(err => console.log(err));
-// rutgersjs.getRoutePredictions('penn').then(function(routeStops){
-//     console.log(routeStops);
-// })
-// .catch(err => console.log(err));
+// rutgersjs.getRouteStops('EE').then(function(result){
+// 	console.log(result);
+// }).catch(err => console.log(err));
+rutgersjs.getStopPredictionsForRoute('EE').then(function(routeStops){
+    console.log(routeStops);
+})
+.catch(err => console.log(err));
 
 // rutgersjs.getStopLocation('scott').then(function(location){
 // 	console.log(location);
