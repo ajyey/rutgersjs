@@ -12,13 +12,29 @@ const routeConfig = JSON.parse(fs.readFileSync(__dirname+path.sep+'config'+path.
 //prediction variables
 var predictionUrl = 'http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=rutgers&r=<routeTag>&s=<stopTag>'
 const routePredictUrl = 'http://webservices.nextbus.com/service/publicXMLFeed?a=rutgers&command=routeConfig'
-//Function to get the stops for a specific bus route
-exports.getRouteStops = function(routeTag){
+
+
+//Returns the stop titles for a specific route
+exports.getRouteStops = function(routeTitle){
     return new Promise((resolve, reject)=>{
         doRequest(routePredictUrl).then(function(response){
             //parse the request
             parseRequest(response).then(function(parsed){
-                console.log(parsed);
+                var routes = parsed.body.route;
+                var stops = [];
+                routes.forEach(route=>{
+                    if(route.title[0]===routeTitle){
+                        //route found
+                        let stop = route.stop;
+                        stop.forEach(element => {
+                            stops.push(element.title[0]);
+                        })
+                        resolve(stops);
+                    }
+                })
+                //route not found
+                reject("The route you requested does not exist. Please refer to the documentation to make sure you entered your route title correctly.")
+
             })
         }).catch(err => reject(err));
         // if(!routes.hasOwnProperty(routeTag)){

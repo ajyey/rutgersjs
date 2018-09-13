@@ -7,7 +7,9 @@ var obj = JSON.parse(fs.readFileSync('config/rutgersrouteconfig.json'))
 
 
 
-rutgersjs.getRouteStops('scott');
+rutgersjs.getRouteStops('EE').then(function(result){
+	console.log(result);
+}).catch(err => console.log(err));
 // rutgersjs.getRoutePredictions('penn').then(function(routeStops){
 //     console.log(routeStops);
 // })
