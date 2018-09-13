@@ -1,7 +1,6 @@
 const request   = require('request');
 const x2j       = require('xml2js');
 const path      = require('path');
-
 const parser = new x2j.Parser({mergeAttrs: true});
 const fs = require('fs');
 
@@ -13,34 +12,32 @@ const routeConfig = JSON.parse(fs.readFileSync(__dirname+path.sep+'config'+path.
 var predictionUrl = 'http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=rutgers&r=<routeTag>&s=<stopTag>'
 const routeConfigUrl = 'http://webservices.nextbus.com/service/publicXMLFeed?a=rutgers&command=routeConfig'
 
-
 //Returns the stop titles for a specific route
 exports.getRouteStops = function(routeTitle){
     return new Promise((resolve, reject)=>{
-        doRequest(routeConfigUrl).then(function(response){
-            //parse the request
-            parseRequest(response).then(function(parsed){
-                var routes = parsed.body.route;
-                var stops = [];
-                routes.forEach(route=>{
-                    if(route.title[0]===routeTitle){
-                        //route found
-                        let stop = route.stop;
-                        stop.forEach(element => {
-                            stops.push({
-                                title: element.title[0],
-                                tag: element.tag[0],
-                                routeTitle: routeTitle,
-                                routeTag: route.tag[0]
-                            });
-                        })
-                        resolve(stops);
-                    }
-                })
-                //route not found
-                reject("The route you requested does not exist. Please refer to the documentation to make sure you entered your route title correctly.")
-            }).catch(err => reject(err));
-        }).catch(err => reject(err));
+        getRouteConfig(routeConfigUrl).then(function(parsed){
+            var routes = parsed.body.route;
+            var stops = [];
+            routes.forEach(route=>{
+                if(route.title[0]===routeTitle){
+                    //route found
+                    let stop = route.stop;
+                    stop.forEach(element => {
+                        stops.push({
+                            title: element.title[0],
+                            tag: element.tag[0],
+                        });
+                    })
+                    resolve({
+                        routeTitle: routeTitle,
+                        routeTag: route.tag[0],
+                        stops: stops
+                    });
+                }
+            })
+            //route title not found
+            reject("The route you requested does not exist. Please refer to the documentation to make sure you entered your route title correctly.")
+        })
     })
 }
 //Function to get route predictions for a specific route
@@ -48,13 +45,13 @@ exports.getRouteStops = function(routeTitle){
 exports.getStopPredictionsForRoute = function(routeTitle){
     return new Promise((resolve,reject)=>{
         exports.getRouteStops(routeTitle)
-        .then(async function(stops){
+        .then(async function(result){
             let requestPromises = [];
             let parsedPromises = [];
             let predictions = [];
-
+            var stops = result.stops;
             for(var i = 0; i<stops.length;i++){
-                let url = predictionUrl.replace("<routeTag>",stops[i].routeTag);
+                let url = predictionUrl.replace("<routeTag>",result.routeTag)
                 url = url.replace("<stopTag>",stops[i].tag);
                 let promise = doRequest(url);
                 requestPromises.push(promise);
@@ -123,20 +120,20 @@ exports.getStopLocation = function(stop){
 
 
 //Gets the locations of all stops
-exports.getAllStopLocations = function(){
-    return new Promise((resolve, reject)=>{
-        let ret = [];
-        let stops = routeConfig.stops;
-        for(var stop in stops){
-            exports.getStopLocation(stop)
-            .then(function(result){
-                ret.push(result);
-            })
-            .catch(err=>reject(err));
-        }
-        resolve(ret);
-    });
-}
+// exports.getAllStopLocations = function(){
+//     return new Promise((resolve, reject)=>{
+//         let ret = [];
+//         let stops =
+//         for(var stop in stops){
+//             exports.getStopLocation(stop)
+//             .then(function(result){
+//                 ret.push(result);
+//             })
+//             .catch(err=>reject(err));
+//         }
+//         resolve(ret);
+//     });
+// }
 
 //gets stop locations based on route
 exports.getStopLocationsForRoute = function(routeTag){
@@ -199,6 +196,7 @@ exports.getStopPredictions = function(stop){
 
 
 
+
 //============================
 //UTILITY FUNCTIONS
 //============================
@@ -221,9 +219,14 @@ function parseRequest(body){
     })
 }
 
-function getRouteTag(routeTitle){
-    return new Promise((resolve,reject)=> {
-        doRequest(routeP)
+function getRouteConfig(url){
+    return new Promise((resolve,reject)=>{
+        doRequest(url).then(function(response){
+            parseRequest(response).then(function(parsed){
+                resolve(parsed);
+            }).catch(err => console.log(err))
+        }).catch(err => console.log(err));
+
     })
 }
 
