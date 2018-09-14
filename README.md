@@ -43,7 +43,6 @@ rutgersjs.getRouteList().then(function(list){
 	console.log(list)
 }).catch(err => console.log(err))
 ````
-
 ## Documentation and Examples
 Complete documentation and examples can be found on the projects [wiki](https://github.com/andrewleonard1693/rutgersjs/wiki).
 
