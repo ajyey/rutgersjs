@@ -28,11 +28,20 @@ can be found [here](https://nodejs.org/en/download/current/).
 
 A comprehensive guide can be found [here](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions).
 
-### Installing the Package
+### Usage
 
 To install rutgersjs for use in your Node project, navigate to your project's directory and install with npm
 ````bash
 npm install --save rutgersjs
+````
+
+Using the module in your project is straightforward. Here's a simple example:
+````javascript
+const rutgersjs = require('rutgersjs')
+
+rutgersjs.getRouteList().then(function(list){
+	console.log(list)
+}).catch(err => console.log(err))
 ````
 
 ## Documentation and Examples

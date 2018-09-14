@@ -1,9 +1,9 @@
 var rutgersjs = require('./index');
 
 
-// rutgersjs.getStopPredictions('Nursing School').then(function(result){
-// // 	console.log(result);
-// // }).catch(err => console.log(err));
-rutgersjs.getStops('EE').then(function(stops){
-	console.log(stops)
+// rutgersjs.getStopPredictions('Scott Hall').then(function(predictions){
+// 	console.log(predictions);
+// }).catch(err => console.log(err));
+rutgersjs.getRouteList().then(function(list){
+	console.log(list)
 }).catch(err => console.log(err))
