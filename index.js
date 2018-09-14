@@ -77,6 +77,7 @@ exports.getStopPredictionsForRoute = function(routeTitle){
                 let stopTitle = element.body.predictions[0].stopTitle[0];
 
                 if(!element.body.predictions[0].dirTitleBecauseNoPredictions){
+                    let dir = element.body.predictions[0].direction[0].title[0]
                     let pred = element.body.predictions[0].direction[0].prediction;
                     pred.forEach(element => {
                         minutes.push(element.minutes[0]);
@@ -84,6 +85,7 @@ exports.getStopPredictionsForRoute = function(routeTitle){
                     });
                     predictions.push({
                         title: stopTitle,
+                        direction:dir,
                         minutes: minutes,
                         seconds: seconds,
                         predictionAvailable:true
@@ -160,8 +162,8 @@ exports.getAllStopLocations = function(){
         }).catch(err => reject(err));
     });
 }
-//get stop predictions
-exports.getStopPredictions = function(stop){
+//get predictions for a specific stop for all routes 
+exports.getStopPredictions = function(stopTitle){
     return new Promise((resolve, reject) => {
         var routes = routeConfig.routes;
         var routesContainingTheStop = [];
