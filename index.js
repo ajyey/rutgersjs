@@ -220,7 +220,11 @@ exports.getStopPredictions =  function(stopTitle){
                 })
                 
             }
-            resolve(ret)
+            if(ret.length == 0){
+                reject("There doesn't seem to be any predictions for that stop at this time")
+            }else{
+                resolve(ret)
+            }
         }).catch(err => reject(err))
 
     })

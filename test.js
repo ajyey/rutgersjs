@@ -17,9 +17,9 @@ var rutgersjs = require('./index');
 // 	console.log(location);
 // });
 
-// rutgersjs.getStopPredictions('scott').then(function(result){
-// 	console.log(result);
-// }).catch(err => console.log(err));
-rutgersjs.getSingleStopPrediction('EE','Scott Hall').then(function(result){
+rutgersjs.getStopPredictions('Nursing School').then(function(result){
 	console.log(result);
-}).catch(err => console.log(err))
+}).catch(err => console.log(err));
+// rutgersjs.getSingleStopPrediction('EE','Scott Hall').then(function(result){
+// 	console.log(result);
+// }).catch(err => console.log(err))
