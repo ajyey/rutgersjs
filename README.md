@@ -17,11 +17,11 @@ process is as easy as running the following command in your terminal
 brew install node
 ````
 
-Otherwise, Node can be installed via through the [installer](https://nodejs.org/en/).
+Otherwise, Node can be installed using the [installer](https://nodejs.org/en/).
 
 ##### Windows
 For Windows, using the normal installer is most likely the easiest way to install Node and it 
 can be found [here](https://nodejs.org/en/download/current/).
 ##### Debian and Ubuntu based Linux Distributions
 
-A comprehensive guide can be found [here](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions)
+A comprehensive guide can be found [here](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions).
