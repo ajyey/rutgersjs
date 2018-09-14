@@ -8,7 +8,7 @@ to interact with other facets of the Rutgers API such as Schedule of Classes and
 ## Getting Started
 
 ### Prerequisites 
-- You should have Node.js installed on your system. The current version of rutgersjs was built using 
+You should have Node.js installed on your system. The current version of rutgersjs was built using 
 version 10.10.0 of Node.js
 
 #### Installation
@@ -27,6 +27,9 @@ can be found [here](https://nodejs.org/en/download/current/).
 ##### Debian and Ubuntu based Linux Distributions
 
 A comprehensive guide can be found [here](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions).
+
+## Documentation and Examples
+Complete documentation and examples can be found on the projects [wiki](https://github.com/andrewleonard1693/rutgersjs/wiki).
 
 ## License
 MIT
