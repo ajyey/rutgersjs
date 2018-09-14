@@ -28,6 +28,13 @@ can be found [here](https://nodejs.org/en/download/current/).
 
 A comprehensive guide can be found [here](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions).
 
+### Installing the Package
+
+To install rutgersjs for use in your Node project, navigate to your project's directory and install with npm
+````bash
+npm install --save rutgersjs
+````
+
 ## Documentation and Examples
 Complete documentation and examples can be found on the projects [wiki](https://github.com/andrewleonard1693/rutgersjs/wiki).
 
