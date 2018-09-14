@@ -1,13 +1,20 @@
 {
   "name": "rutgersjs",
   "version": "1.0.6",
-  "description": "An API wrapper for the various Rutgers API services",
+  "description": "A wrapper for the various Rutgers API services",
+  "keywords": ["rutgers","rutgersjs","api","bus"],
+  "homepage": "https://github.com/andrewleonard1693/rutgersjs",
+  "bugs": {"url":"https://github.com/andrewleonard1693/rutgersjs/issues","email": "andrewleonard1693@gmail.com" },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Andrew Leonard",
   "license": "MIT",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/andrewleonard1693/rutgersjs.git"
+  },
   "dependencies": {
     "path": "^0.12.7",
     "request": "^2.88.0",
