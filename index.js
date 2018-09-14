@@ -106,16 +106,14 @@ exports.getStopPredictionsForRoute = function(routeTitle){
 exports.getStopLocation = function(stopTitle){
     return new Promise((resolve, reject)=>{
         getRouteConfig(routeConfigUrl).then(function(parsed){
-            //return the location of the passed in stop title
-
             let routes = parsed.body.route;
             routes.forEach(route=>{
                 let stops = route.stop;
                 stops.forEach(stop => {
                     if(stop.title[0] === stopTitle){
                         resolve({
-                            stopTitle: stopTitle,
-                            stopTag: stop.tag[0],
+                            tag: stop.tag[0],
+                            title: stopTitle,
                             lat: Number(stop.lat[0]),
                             lon: Number(stop.lon[0])
                         })
@@ -129,20 +127,37 @@ exports.getStopLocation = function(stopTitle){
 
 
 //Gets the locations of all stops
-// exports.getAllStopLocations = function(){
-//     return new Promise((resolve, reject)=>{
-//         let ret = [];
-//         let stops =
-//         for(var stop in stops){
-//             exports.getStopLocation(stop)
-//             .then(function(result){
-//                 ret.push(result);
-//             })
-//             .catch(err=>reject(err));
-//         }
-//         resolve(ret);
-//     });
-// }
+exports.getAllStopLocations = function(){
+    return new Promise((resolve, reject)=>{
+        getRouteConfig(routeConfigUrl).then(function(parsed){
+            let routes = parsed.body.route
+            var stopObjects = []
+            routes.forEach(route => {
+                let stops = route.stop;
+                var present = false;
+                stops.forEach(stop => {
+                   stopObjects.forEach(element => {
+                       if(element.title === stop.title[0] && element.tag === stop.tag[0]){
+                           present = true
+                       }
+                   })
+                   if(!present){
+                       stopObjects.push({
+                           tag: stop.tag[0],
+                           title: stop.title[0],
+                           lat: Number(stop.lat[0]),
+                           lon: Number(stop.lon[0])
+
+                       })
+                   }else{
+                       present = false
+                   }
+                })
+            })
+            resolve(stopObjects)
+        }).catch(err => reject(err));
+    });
+}
 
 //gets stop locations based on route
 exports.getStopLocationsForRoute = function(routeTag){
@@ -154,7 +169,6 @@ exports.getStopLocationsForRoute = function(routeTag){
         }
         let stops = routes[routeTag].stops;
         let ret = [];
-
         stops.forEach(stop => {
             exports.getStopLocation(stop)
             .then(function(result){
@@ -177,32 +191,6 @@ exports.getStopPredictions = function(stop){
         })
     })
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -239,13 +227,13 @@ function getRouteConfig(url){
     })
 }
 
-async function init(){
-    await getRouteConfig(routeConfigUrl).then(function(result){
-        //write to a file
-        fs.writeFile('config.txt', JSON.stringify(result), (err) => {  
-            // throws an error, you could also catch it here
-            if (err) throw err;
-        });
+function stopIsPresent(stop, arr){
+    arr.forEach(element => {
+        if(element.title[0] === stop.title[0] && element.tag[0] === stop.tag[0]){
+            console.log('element: '+element.title[0])
+            return true
+        }
+        return false
     })
 }
 

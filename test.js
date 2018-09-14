@@ -11,12 +11,12 @@ var rutgersjs = require('./index');
 // })
 // .catch(err => console.log(err));
 
-rutgersjs.getStopLocation('Hill Center').then(function(location){
-	console.log(location);
-});
-// rutgersjs.getAllStopLocations().then(function(locations){
-// 	console.log(locations);
-// })
+// rutgersjs.getStopLocation('Hill Center').then(function(location){
+// 	console.log(location);
+// });
+rutgersjs.getAllStopLocations().then(function(locations){
+	console.log(locations)
+}).catch(err=>console.log(err))
 // rutgersjs.getStopPredictions('scott').then(function(result){
 // 	console.log(result);
 // }).catch(err => console.log(err));
