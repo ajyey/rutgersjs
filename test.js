@@ -7,7 +7,9 @@ var rutgersjs = require('./index');
 // 	console.log(result);
 // }).catch(err => console.log(err));
 rutgersjs.getStopPredictionsForRoute('EE').then(function(routeStops){
-    console.log(routeStops);
+	routeStops.forEach(stop => {
+		console.log(stop)
+	})
 })
 .catch(err => console.log(err));
 

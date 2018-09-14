@@ -79,23 +79,26 @@ exports.getStopPredictionsForRoute = function(routeTitle){
                 if(!element.body.predictions[0].dirTitleBecauseNoPredictions){
                     let dir = element.body.predictions[0].direction[0].title[0]
                     let pred = element.body.predictions[0].direction[0].prediction;
+                    let ob = []
                     pred.forEach(element => {
-                        minutes.push(element.minutes[0]);
-                        seconds.push(element.seconds[0]);
+                        ob.push({
+                            minutes: element.minutes[0],
+                            seconds: element.seconds[0]
+                        })
+                        // minutes.push(element.minutes[0]);
+                        // seconds.push(element.seconds[0]);
                     });
                     predictions.push({
                         title: stopTitle,
                         direction:dir,
-                        minutes: minutes,
-                        seconds: seconds,
+                        predictions: ob,
                         predictionAvailable:true
                     })
                 }
                 else{
                     predictions.push({
                         title: stopTitle,
-                        minutes:null,
-                        seconds:null,
+                        predictions: null,
                         predictionAvailable: false
                     })
                 }
