@@ -8,11 +8,19 @@ const   request   =     require('request'),
 //api endpoints
 const predictionUrl     =   'http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=rutgers&r=<routeTag>&s=<stopTag>'
 const routeConfigUrl    =   'http://webservices.nextbus.com/service/publicXMLFeed?a=rutgers&command=routeConfig'
+const routeListUrl      =   'http://webservices.nextbus.com/service/publicXMLFeed?a=rutgers&command=routeList'
 
 
-
-//Returns the stop titles for a specific route
-exports.getRouteStops = function(routeTitle){
+//returns the rutgers route list
+exports.getRouteList = function(){
+    return new Promise((resolve, reject)=> {
+        getRouteList(routeListUrl).then(function(routeList){
+            resolve(routeList.body.route);
+        }).catch(err=>reject(err))
+    })
+}
+//Returns all stops for a specific route
+exports.getStops = function(routeTitle){
     return new Promise((resolve, reject)=>{
         getRouteConfig(routeConfigUrl).then(function(parsed){
             var routes = parsed.body.route;
@@ -45,7 +53,7 @@ exports.getRouteStops = function(routeTitle){
 //Returns a promise with the title of the stop and the minutes or seconds eta
 exports.getStopPredictionsForRoute = function(routeTitle){
     return new Promise((resolve,reject)=>{
-        exports.getRouteStops(routeTitle)
+        exports.getStops(routeTitle)
         .then(async function(result){
             let requestPromises = [];
             let parsedPromises = [];
@@ -112,29 +120,6 @@ exports.getStopPredictionsForRoute = function(routeTitle){
     })
 }
 
-exports.getSingleStopPrediction = function(routeTitle, stopTitle){
-    return new Promise((resolve, reject)=> {
-        exports.getRouteStops(routeTitle).then(function(result){
-            let stops = result.stops
-            let present = false;
-            stops.forEach(async function(stop) {
-                if(stop.title === stopTitle){
-                    present = true
-                    let url = predictionUrl.replace("<routeTag>",result.routeTag)
-                    url = url.replace("<stopTag>",stop.tag);
-                    await doAndParse(url).then(function(result){
-                        resolve(result)
-                    }).catch(err => reject(err))
-                }
-            })
-            if(!present){
-                reject("Nothing found. Check your parameters")
-            }
-        
-        }).catch(err => reject(err))
-    })
-}
-
 //Gets the location of a specific stop including title, latitude, and logitude
 exports.getStopLocation = function(stopTitle){
     return new Promise((resolve, reject)=>{
@@ -160,7 +145,7 @@ exports.getStopLocation = function(stopTitle){
 
 
 //Gets the locations of all stops
-exports.getAllStopLocations = function(){
+exports.getAllStops = function(){
     return new Promise((resolve, reject)=>{
         getRouteConfig(routeConfigUrl).then(function(parsed){
             let routes = parsed.body.route
@@ -254,13 +239,13 @@ function parseRequest(body){
         })
     })
 }
-function doAndParse(url){
-    return new Promise((reject,resolve)=>{
-        doRequest(url).then(function(result){
-            parseRequest(result).then(function(parsed){
-                resolve(parsed)
+function getRouteList(url){
+    return new Promise((resolve,reject)=>{
+        doRequest(url).then(function(response){
+            parseRequest(response).then(function(parsed){
+                resolve(parsed);
             }).catch(err => reject(err))
-        }).catch(err => reject(err))
+        }).catch(err => reject(err));
     })
 }
 
@@ -269,8 +254,8 @@ function getRouteConfig(url){
         doRequest(url).then(function(response){
             parseRequest(response).then(function(parsed){
                 resolve(parsed);
-            }).catch(err => console.log(err))
-        }).catch(err => console.log(err));
+            }).catch(err => reject(err))
+        }).catch(err => reject(err));
 
     })
 }
