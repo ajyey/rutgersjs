@@ -85,14 +85,12 @@ exports.getStopPredictionsForRoute = function(routeTitle){
                             minutes: element.minutes[0],
                             seconds: element.seconds[0]
                         })
-                        // minutes.push(element.minutes[0]);
-                        // seconds.push(element.seconds[0]);
                     });
                     predictions.push({
                         title: stopTitle,
                         direction:dir,
-                        predictions: ob,
-                        predictionAvailable:true
+                        predictionAvailable:true,
+                        predictions: ob
                     })
                 }
                 else{
@@ -103,7 +101,11 @@ exports.getStopPredictionsForRoute = function(routeTitle){
                     })
                 }
             })
-            resolve(predictions);
+            resolve({
+                routeTitle: result.routeTitle,
+                routeTag: result.routeTag,
+                predictions: predictions
+            });
         })
         .catch(err => reject(err));
     })
@@ -166,13 +168,38 @@ exports.getAllStopLocations = function(){
     });
 }
 //get predictions for a specific stop for all routes 
-exports.getStopPredictions = function(stopTitle){
+exports.getStopPredictions =  function(stopTitle){
     return new Promise((resolve, reject) => {
-        var routes = routeConfig.routes;
-        var routesContainingTheStop = [];
-        routes.forEach(route => {
-            console.log(route)
+        getRouteConfig(routeConfigUrl).then(async function(parsed){
+            let routes = parsed.body.route
+            let ret = []
+            let routePredictionPromises = []
+            var routePredictionResult
+            routes.forEach( function(route) {
+                let routePromise = exports.getStopPredictionsForRoute(route.title[0])
+                routePredictionPromises.push(routePromise)
+
+            })
+            await Promise.all(routePredictionPromises).then(function(result){
+                routePredictionResult = result
+            })
+            for(var i = 0;i<routePredictionResult.length;i++){
+                let predictions = routePredictionResult[i].predictions
+                predictions.forEach(pred => {
+                    if(pred.title === stopTitle && pred.predictionAvailable === true){
+                        ret.push({
+                            routeTitle: routePredictionResult[i].routeTitle,
+                            routeTag: routePredictionResult[i].routeTag,
+                            prediction: pred
+                            
+                        })
+                    }
+                })
+                
+            }
+            resolve(ret)
         })
+        //loop through all routes
     })
 }
 
@@ -218,6 +245,28 @@ function stopIsPresent(stop, arr){
             return true
         }
         return false
+    })
+}
+function getIndividualStopPredictionForRoute(routeTitle,stopTitle){
+    return new Promise((resolve, reject)=>{
+        getRouteConfig(routeConfigUrl).then(function(parsed){
+            let routes = parsed.body.route
+            routes.forEach(route => {
+                console.log(route.title[0])
+                console.log(routeTitle)
+                if(route.title[0] === routeTitle){
+                    console.log('hello')
+                    exports.getStopPredictionsForRoute(routeTitle).then(function(predictions){
+                        predictions.forEach(pred => {
+                            if(pred.title === stopTitle){
+                                resolve(pred)
+                            }
+                        })
+                    })
+                }
+            })
+        }).catch(err => reject(err))
+        reject("No prediction found. Double check your parameters")
     })
 }
 
