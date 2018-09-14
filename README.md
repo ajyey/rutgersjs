@@ -1,4 +1,4 @@
-# rutgersjs
+# rutgersjs ![Logo](http://cdn-radiotime-logos.tunein.com/s230327q.png)
 A Rutgers API wrapper based in node.js. In its current form, rutgersjs supports retrieving common
 information about bus routes, stops, predictions and locations. Further releases will include methods
 to interact with other facets of the Rutgers API such as Schedule of Classes and Events.
@@ -25,3 +25,9 @@ can be found [here](https://nodejs.org/en/download/current/).
 ##### Debian and Ubuntu based Linux Distributions
 
 A comprehensive guide can be found [here](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions).
+
+
+
+
+## Authors
+- Andrew Leonard
