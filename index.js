@@ -111,6 +111,29 @@ exports.getStopPredictionsForRoute = function(routeTitle){
     })
 }
 
+exports.getSingleStopPrediction = function(routeTitle, stopTitle){
+    return new Promise((resolve, reject)=> {
+        exports.getRouteStops(routeTitle).then(function(result){
+            let stops = result.stops
+            let present = false;
+            stops.forEach(async function(stop) {
+                if(stop.title === stopTitle){
+                    present = true
+                    let url = predictionUrl.replace("<routeTag>",result.routeTag)
+                    url = url.replace("<stopTag>",stop.tag);
+                    await doAndParse(url).then(function(result){
+                        resolve(result)
+                    }).catch(err => reject(err))
+                }
+            })
+            if(!present){
+                reject("Nothing found. Check your parameters")
+            }
+        
+        }).catch(err => reject(err))
+    })
+}
+
 //Gets the location of a specific stop including title, latitude, and logitude
 exports.getStopLocation = function(stopTitle){
     return new Promise((resolve, reject)=>{
@@ -198,8 +221,8 @@ exports.getStopPredictions =  function(stopTitle){
                 
             }
             resolve(ret)
-        })
-        //loop through all routes
+        }).catch(err => reject(err))
+
     })
 }
 
@@ -211,7 +234,7 @@ exports.getStopPredictions =  function(stopTitle){
 function doRequest(url){
     return new Promise((resolve, reject)=>{
         request(url, (err, res, body) => {
-            if(err){ reject("There was an error getting the predictions for the specified route")};
+            if(err){ reject(err)};
             resolve(body);
     
         });
@@ -220,10 +243,19 @@ function doRequest(url){
 function parseRequest(body){
     return new Promise((resolve, reject)=>{
         parser.parseString(body, function(err, result){
-            if(err){reject("There was an error parsing the result from predictions request")};
+            if(err){reject(err)};
             var routes = JSON.parse(JSON.stringify(result,undefined,3));
             resolve(routes);
         })
+    })
+}
+function doAndParse(url){
+    return new Promise((reject,resolve)=>{
+        doRequest(url).then(function(result){
+            parseRequest(result).then(function(parsed){
+                resolve(parsed)
+            }).catch(err => reject(err))
+        }).catch(err => reject(err))
     })
 }
 

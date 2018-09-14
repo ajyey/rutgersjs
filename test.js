@@ -10,9 +10,9 @@ var rutgersjs = require('./index');
 // 	console.log(routeStops)
 // })
 // .catch(err => console.log(err));
-rutgersjs.getStopPredictions('Scott Hall').then(function(result){
-	console.log(result);
-}).catch(err =>console.log(err))
+// rutgersjs.getStopPredictions('Scott Hall').then(function(result){
+// 	console.log(result);
+// }).catch(err =>console.log(err))
 // rutgersjs.getStopLocation('Hill Center').then(function(location){
 // 	console.log(location);
 // });
@@ -20,3 +20,6 @@ rutgersjs.getStopPredictions('Scott Hall').then(function(result){
 // rutgersjs.getStopPredictions('scott').then(function(result){
 // 	console.log(result);
 // }).catch(err => console.log(err));
+rutgersjs.getSingleStopPrediction('EE','Scott Hall').then(function(result){
+	console.log(result);
+}).catch(err => console.log(err))
