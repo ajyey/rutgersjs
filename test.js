@@ -1,8 +1,4 @@
 var rutgersjs = require('./index');
-
-
-var fs = require('fs');
-var obj = JSON.parse(fs.readFileSync('config/rutgersrouteconfig.json'))
 // console.log(obj.routes['ee'].stops);
 
 
@@ -10,14 +6,14 @@ var obj = JSON.parse(fs.readFileSync('config/rutgersrouteconfig.json'))
 // rutgersjs.getRouteStops('EE').then(function(result){
 // 	console.log(result);
 // }).catch(err => console.log(err));
-rutgersjs.getStopPredictionsForRoute('EE').then(function(routeStops){
-    console.log(routeStops);
-})
-.catch(err => console.log(err));
+// rutgersjs.getStopPredictionsForRoute('EE').then(function(routeStops){
+//     console.log(routeStops);
+// })
+// .catch(err => console.log(err));
 
-// rutgersjs.getStopLocation('scott').then(function(location){
-// 	console.log(location);
-// });
+rutgersjs.getStopLocation('Hill Center').then(function(location){
+	console.log(location);
+});
 // rutgersjs.getAllStopLocations().then(function(locations){
 // 	console.log(locations);
 // })

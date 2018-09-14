@@ -1,16 +1,14 @@
-const request   = require('request');
-const x2j       = require('xml2js');
-const path      = require('path');
-const parser = new x2j.Parser({mergeAttrs: true});
-const fs = require('fs');
+const   request   =     require('request'),
+        x2j       =     require('xml2js'),
+        fs        =     require('fs'),
+        path      =     require('path'),
+        parser    =     new x2j.Parser({mergeAttrs: true})
 
-//parse the route config file for easy access to route/stop information
-const routeConfig = JSON.parse(fs.readFileSync(__dirname+path.sep+'config'+path.sep+'rutgersrouteconfig.json'));
+//api endpoints
+const predictionUrl     =   'http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=rutgers&r=<routeTag>&s=<stopTag>'
+const routeConfigUrl    =   'http://webservices.nextbus.com/service/publicXMLFeed?a=rutgers&command=routeConfig'
 
 
-//prediction variables
-var predictionUrl = 'http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=rutgers&r=<routeTag>&s=<stopTag>'
-const routeConfigUrl = 'http://webservices.nextbus.com/service/publicXMLFeed?a=rutgers&command=routeConfig'
 
 //Returns the stop titles for a specific route
 exports.getRouteStops = function(routeTitle){
@@ -105,16 +103,27 @@ exports.getStopPredictionsForRoute = function(routeTitle){
 }
 
 //Gets the location of a specific stop including title, latitude, and logitude
-exports.getStopLocation = function(stop){
+exports.getStopLocation = function(stopTitle){
     return new Promise((resolve, reject)=>{
-        let stops = routeConfig.stops;
-        if(!stops.hasOwnProperty(stop)){reject("An invalid stop was passed in.")}
-        var validStop = stops[stop];
-        resolve({
-            title: validStop.title,
-            lat: Number(validStop.lat),
-            lon: Number(validStop.lon)
-        });
+        getRouteConfig(routeConfigUrl).then(function(parsed){
+            //return the location of the passed in stop title
+
+            let routes = parsed.body.route;
+            routes.forEach(route=>{
+                let stops = route.stop;
+                stops.forEach(stop => {
+                    if(stop.title[0] === stopTitle){
+                        resolve({
+                            stopTitle: stopTitle,
+                            stopTag: stop.tag[0],
+                            lat: Number(stop.lat[0]),
+                            lon: Number(stop.lon[0])
+                        })
+                    }
+                })
+            })
+            reject("The stop you specified does not exist. Please refer to the wiki for valid stop titles.")
+        }).catch(err => console.log(err));
     })
 }
 
@@ -227,6 +236,16 @@ function getRouteConfig(url){
             }).catch(err => console.log(err))
         }).catch(err => console.log(err));
 
+    })
+}
+
+async function init(){
+    await getRouteConfig(routeConfigUrl).then(function(result){
+        //write to a file
+        fs.writeFile('config.txt', JSON.stringify(result), (err) => {  
+            // throws an error, you could also catch it here
+            if (err) throw err;
+        });
     })
 }
 
