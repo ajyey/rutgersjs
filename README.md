@@ -13,7 +13,7 @@ version 10.10.0 of Node.js
 
 #### Installation
 ##### Mac
-The easiest way to install Node for Mac would be to use [Homebrew](https://brew.sh/). From here the installtion
+The easiest way to install Node for Mac would be to use [Homebrew](https://brew.sh/). From here the installation
 process is as easy as running the following command in your terminal
 ````bash
 brew install node
@@ -28,8 +28,8 @@ can be found [here](https://nodejs.org/en/download/current/).
 
 A comprehensive guide can be found [here](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions).
 
-
-
+## License
+MIT
 
 ## Authors
 - Andrew Leonard
