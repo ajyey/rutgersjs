@@ -2,6 +2,7 @@ const   request   =     require('request'),
         x2j       =     require('xml2js'),
         fs        =     require('fs'),
         path      =     require('path'),
+        assert    =     require('assert'),
         parser    =     new x2j.Parser({mergeAttrs: true})
 
 //api endpoints
@@ -272,42 +273,4 @@ function getRouteConfig(url){
         }).catch(err => console.log(err));
 
     })
-}
-
-function stopIsPresent(stop, arr){
-    arr.forEach(element => {
-        if(element.title[0] === stop.title[0] && element.tag[0] === stop.tag[0]){
-            console.log('element: '+element.title[0])
-            return true
-        }
-        return false
-    })
-}
-function getIndividualStopPredictionForRoute(routeTitle,stopTitle){
-    return new Promise((resolve, reject)=>{
-        getRouteConfig(routeConfigUrl).then(function(parsed){
-            let routes = parsed.body.route
-            routes.forEach(route => {
-                console.log(route.title[0])
-                console.log(routeTitle)
-                if(route.title[0] === routeTitle){
-                    console.log('hello')
-                    exports.getStopPredictionsForRoute(routeTitle).then(function(predictions){
-                        predictions.forEach(pred => {
-                            if(pred.title === stopTitle){
-                                resolve(pred)
-                            }
-                        })
-                    })
-                }
-            })
-        }).catch(err => reject(err))
-        reject("No prediction found. Double check your parameters")
-    })
-}
-
-
-//function to get all the 
-exports.printMsg = function(){
-    console.log("testing a message");
 }
