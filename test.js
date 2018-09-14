@@ -3,9 +3,9 @@ var rutgersjs = require('./index');
 
 
 
-// rutgersjs.getRouteStops('EE').then(function(result){
-// 	console.log(result);
-// }).catch(err => console.log(err));
+rutgersjs.getRouteStops('EE').then(function(result){
+	console.log(result);
+}).catch(err => console.log(err));
 // rutgersjs.getStopPredictionsForRoute('EE').then(function(routeStops){
 //     console.log(routeStops);
 // })
@@ -14,9 +14,7 @@ var rutgersjs = require('./index');
 // rutgersjs.getStopLocation('Hill Center').then(function(location){
 // 	console.log(location);
 // });
-rutgersjs.getAllStopLocations().then(function(locations){
-	console.log(locations)
-}).catch(err=>console.log(err))
+
 // rutgersjs.getStopPredictions('scott').then(function(result){
 // 	console.log(result);
 // }).catch(err => console.log(err));

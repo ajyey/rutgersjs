@@ -22,8 +22,10 @@ exports.getRouteStops = function(routeTitle){
                     let stop = route.stop;
                     stop.forEach(element => {
                         stops.push({
-                            title: element.title[0],
                             tag: element.tag[0],
+                            title: element.title[0],
+                            lat: Number(element.lat[0]),
+                            lon: Number(element.lon[0])
                         });
                     })
                     resolve({
@@ -158,29 +160,6 @@ exports.getAllStopLocations = function(){
         }).catch(err => reject(err));
     });
 }
-
-//gets stop locations based on route
-exports.getStopLocationsForRoute = function(routeTag){
-    return new Promise((resolve, reject)=>{
-        let routes = routeConfig.routes;
-        if(!routes.hasOwnProperty(routeTag)){
-            //the route tag is not valid
-            reject("You have entered an invalid route tag: " + routeTag);
-        }
-        let stops = routes[routeTag].stops;
-        let ret = [];
-        stops.forEach(stop => {
-            exports.getStopLocation(stop)
-            .then(function(result){
-                ret.push(result)
-            })
-            .catch(err => reject(err))
-        })
-        resolve(ret);
-
-    })
-}
-
 //get stop predictions
 exports.getStopPredictions = function(stop){
     return new Promise((resolve, reject) => {
