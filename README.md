@@ -1,4 +1,4 @@
-# rutgersjs ![Logo](http://cdn-radiotime-logos.tunein.com/s230327q.png)
+# rutgersjs ![Logo](https://i2.wp.com/stonybrookhockey.com/wp-content/uploads/2016/08/rutgerslogo.png?fit=128%2C128&ssl=1)
 A Rutgers API wrapper based in node.js. In its current form, rutgersjs supports retrieving common
 information about bus routes, stops, predictions and locations. Further releases will include methods
 to interact with other facets of the Rutgers API such as Schedule of Classes and Events.
