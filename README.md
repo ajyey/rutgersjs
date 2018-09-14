@@ -5,7 +5,7 @@ to interact with other facets of the Rutgers API such as Schedule of Classes and
 
 ### Getting Started
 
-####Prerequisites 
+#### Prerequisites 
 - You should have Node.js installed on your system. The current version of rutgersjs was built using 
 version 10.10.0 of Node.js
 
