@@ -1,8 +1,5 @@
 const   request   =     require('request'),
         x2j       =     require('xml2js'),
-        fs        =     require('fs'),
-        path      =     require('path'),
-        assert    =     require('assert'),
         parser    =     new x2j.Parser({mergeAttrs: true})
 
 //api endpoints

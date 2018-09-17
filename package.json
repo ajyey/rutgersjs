@@ -24,7 +24,6 @@
     "url": "https://github.com/andrewleonard1693/rutgersjs.git"
   },
   "dependencies": {
-    "path": "^0.12.7",
     "request": "^2.88.0",
     "xml2js": "^0.4.19"
   }
