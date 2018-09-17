@@ -20,7 +20,7 @@ exports.getRouteList = function(){
     })
 }
 //Returns all stops for a specific route
-exports.getStops = function(routeTitle){
+exports.getStopsOnRoute = function(routeTitle){
     return new Promise((resolve, reject)=>{
         getRouteConfig(routeConfigUrl).then(function(parsed){
             var routes = parsed.body.route;
@@ -51,9 +51,9 @@ exports.getStops = function(routeTitle){
 }
 //Function to get route predictions for a specific route
 //Returns a promise with the title of the stop and the minutes or seconds eta
-exports.getStopPredictionsForRoute = function(routeTitle){
+exports.getRoutePredictions = function(routeTitle){
     return new Promise((resolve,reject)=>{
-        exports.getStops(routeTitle)
+        exports.getStopsOnRoute(routeTitle)
         .then(async function(result){
             let requestPromises = [];
             let parsedPromises = [];
@@ -121,7 +121,7 @@ exports.getStopPredictionsForRoute = function(routeTitle){
 }
 
 //Gets the location of a specific stop including title, latitude, and logitude
-exports.getStopLocation = function(stopTitle){
+exports.getStop = function(stopTitle){
     return new Promise((resolve, reject)=>{
         getRouteConfig(routeConfigUrl).then(function(parsed){
             let routes = parsed.body.route;
@@ -185,7 +185,7 @@ exports.getStopPredictions =  function(stopTitle){
             let routePredictionPromises = []
             var routePredictionResult
             routes.forEach( function(route) {
-                let routePromise = exports.getStopPredictionsForRoute(route.title[0])
+                let routePromise = exports.getRoutePredictions(route.title[0])
                 routePredictionPromises.push(routePromise)
 
             })
