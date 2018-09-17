@@ -7,7 +7,8 @@ to interact with other facets of the Rutgers API such as Schedule of Classes and
 
 **Error handling at this time is basically non-existent. Examples of this would be using the wrong route title or stop title
 as a parameter when invoking the appropriate functions. Because of this, if you are experiencing unexpected behavior, it is highly recommended
-that you double check your parameters against the list of valid parameters in the [wiki](https://github.com/andrewleonard1693/rutgersjs/wiki).**
+that you double check your parameters against the list of valid parameters in the [wiki](https://github.com/andrewleonard1693/rutgersjs/wiki).
+Proper error handling as well as more api services will be implemented in further releases**
 
 ## Getting Started
 
